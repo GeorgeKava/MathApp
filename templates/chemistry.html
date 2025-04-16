@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Chemistry Assistant</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        .form-container {
+            margin-top: 20px;
+        }
+        .form-container label {
+            font-weight: bold;
+        }
+        .form-container input, .form-container button {
+            display: block;
+            width: 100%;
+            margin-top: 10px;
+            padding: 10px;
+            font-size: 16px;
+        }
+        .form-container button {
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .form-container button:hover {
+            background-color: #0056b3;
+        }
+        .image-container, .result-container {
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 20px;
+        }
+        .image-container img {
+            max-width: 100%;
+            height: auto;
+            border: 2px solid #ccc;
+            border-radius: 8px;
+        }
+        .result-container h2 {
+            margin-top: 0;
+        }
+        .math-output {
+            white-space: pre-wrap; /* Preserve line breaks */
+            word-wrap: break-word; /* Break long words */
+        }
+    </style>
+    <script>
+        function setAction(action) {
+            const form = document.getElementById('chemistry-form');
+            form.action = action;
+            form.submit();
+        }
+    </script>
+</head>
+<body>
+    <div class="container">
+        <h1>Chemistry Assistant</h1>
+        <form id="chemistry-form" class="form-container" method="POST" enctype="multipart/form-data">
+            <label for="chemistry-problem">Type your chemistry problem:</label>
+            <input type="text" id="chemistry-problem" name="chemistry_problem" placeholder="e.g., What is the molar mass of H2O?">
+            
+            <button type="button" onclick="setAction('/chemistry?type=text')">Submit Text</button>
+            <button type="button" onclick="setAction('/chemistry?type=capture')">Capture Photo</button>
+        </form>
+        
+        {% if img_name %}
+        <div class="image-container">
+            <h2>Captured Image</h2>
+            <img src="{{ url_for('uploads', filename=img_name.split('/')[-1]) }}" alt="Captured Chemistry Image">
+        </div>
+        {% endif %}
+        
+        {% if result %}
+        <div class="result-container">
+            <h2>Analysis Result</h2>
+            <div class="math-output">
+                {{ result|safe }}
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</body>
+</html>

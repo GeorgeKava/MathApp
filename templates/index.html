@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Camera Capture</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        .video-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            margin-top: 20px;
+        }
+        .video-container img {
+            border: 2px solid #ccc;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        .video-container button {
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .video-container button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+    <nav>
+        <a href="/">Math</a>
+        <a href="/chemistry">Chemistry</a>
+    </nav>
+</head>
+<body>
+    <div class="top-bar">
+    </div>
+    <div class="loader"></div>
+    <div class="container">
+        <h1>Camera Capture</h1>
+        <div class="video-container">
+            <img src="{{ url_for('video_feed') }}" width="640" height="480" alt="Video Feed">
+            <form action="/capture" method="post">
+                <button type="submit">Capture Photo</button>
+            </form>
+        </div>
+    </div>
+</body>
+</html>
