@@ -37,13 +37,13 @@
         .form-container button:hover {
             background-color: #0056b3;
         }
-        .image-container, .result-container {
+        .image-container, .result-container, .video-container {
             background-color: #f9f9f9;
             border: 1px solid #ddd;
             border-radius: 8px;
             padding: 20px;
         }
-        .image-container img {
+        .image-container img, .video-container img {
             max-width: 100%;
             height: auto;
             border: 2px solid #ccc;
@@ -64,6 +64,10 @@
             form.submit();
         }
     </script>
+    <nav>
+        <a href="/">Math</a>
+        <a href="/chemistry">Chemistry</a>
+    </nav>
 </head>
 <body>
     <div class="container">
@@ -75,6 +79,11 @@
             <button type="button" onclick="setAction('/chemistry?type=text')">Submit Text</button>
             <button type="button" onclick="setAction('/chemistry?type=capture')">Capture Photo</button>
         </form>
+        
+        <div class="video-container">
+            <h2>Live Camera Feed</h2>
+            <img src="{{ url_for('video_feed') }}" alt="Video Feed">
+        </div>
         
         {% if img_name %}
         <div class="image-container">

@@ -2,22 +2,25 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Camera Capture</title>
+    <title>Math Assistant</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <style>
-        .video-container {
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            font-family: Arial, sans-serif;
             display: flex;
-            justify-content: center;
-            align-items: center;
             flex-direction: column;
+            gap: 20px;
+        }
+        .form-container {
             margin-top: 20px;
         }
-        .video-container img {
-            border: 2px solid #ccc;
-            border-radius: 8px;
-            margin-bottom: 20px;
+        .form-container label {
+            font-weight: bold;
         }
-        .video-container button {
+        .form-container button {
             background-color: #007BFF;
             color: white;
             border: none;
@@ -26,8 +29,20 @@
             border-radius: 5px;
             cursor: pointer;
         }
-        .video-container button:hover {
+        .form-container button:hover {
             background-color: #0056b3;
+        }
+        .video-container {
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 20px;
+        }
+        .video-container img {
+            max-width: 100%;
+            height: auto;
+            border: 2px solid #ccc;
+            border-radius: 8px;
         }
     </style>
     <nav>
@@ -36,16 +51,16 @@
     </nav>
 </head>
 <body>
-    <div class="top-bar">
-    </div>
-    <div class="loader"></div>
     <div class="container">
-        <h1>Camera Capture</h1>
+        <h1>Math Assistant</h1>
+        <form class="form-container" method="POST" action="/capture">
+            <label for="math-problem">Capture a math problem:</label>
+            <button type="submit">Capture Photo</button>
+        </form>
+        
         <div class="video-container">
-            <img src="{{ url_for('video_feed') }}" width="640" height="480" alt="Video Feed">
-            <form action="/capture" method="post">
-                <button type="submit">Capture Photo</button>
-            </form>
+            <h2>Live Camera Feed</h2>
+            <img src="{{ url_for('video_feed') }}" alt="Video Feed">
         </div>
     </div>
 </body>
