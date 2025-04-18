@@ -93,8 +93,11 @@ MathApp/
 3. Set up the .env file with your Azure OpenAI API credentials:
     
     AZURE_OPENAI_API_ENDPOINT=<your_endpoint>
+
     AZURE_OPENAI_API_KEY=<your_api_key>
+
     AZURE_OPENAI_API_VERSION=<api_version>
+    
     AZURE_OPENAI_MODEL=<model_name>
 
 4. Run the application:
