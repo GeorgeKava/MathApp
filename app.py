@@ -5,7 +5,7 @@ import json
 from azure.search.documents.models import VectorizedQuery
 from openai import AzureOpenAI
 from dotenv import load_dotenv, set_key
-from ai import process_img_llm, process_img_llm_chemistry, process_text_chemistry_problem
+from ai import process_img_llm, process_img_llm_chemistry, process_text_chemistry_problem, process_text_physics_problem, process_img_llm_physics, process_text_math_problem
 
 app = Flask(__name__)
 camera = cv2.VideoCapture(0)
@@ -31,9 +31,32 @@ client = AzureOpenAI(
 )
 
 
-@app.route('/')
+@app.route('/', methods=['GET', 'POST'])
 def index():
-    return render_template('index.html')
+    if request.method == 'POST':
+        action_type = request.args.get('type')
+        
+        if action_type == 'text':
+            # Handle text problem submission
+            math_problem = request.form.get('math_problem')
+            if math_problem:
+                result = process_text_math_problem(math_problem)
+                print(f"Result from process_text_math_problem: {result}")  # Debugging output
+                return render_template('index.html', img_name=None, result=result)
+        
+        elif action_type == 'capture':
+            # Handle capturing an image from the camera
+            success, frame = camera.read()
+            if success:
+                img_name = os.path.join(capture_folder, "captured_math_image.jpg")
+                cv2.imwrite(img_name, frame)
+                result = process_img_llm(img_name)
+                return render_template('index.html', img_name="captured_math_image.jpg", result=result['formatted_summary'])
+            else:
+                return "Failed to capture image"
+    
+    # Handle GET request
+    return render_template('index.html', img_name=None, result=None)
 
 def gen_frames():
         while True:
@@ -105,6 +128,33 @@ def chemistry():
     
     # Handle GET request
     return render_template('chemistry.html', img_name=None, result=None)
+
+@app.route('/physics', methods=['GET', 'POST'])
+def physics():
+    if request.method == 'POST':
+        action_type = request.args.get('type')
+        
+        if action_type == 'text':
+            # Handle text problem submission
+            physics_problem = request.form.get('physics_problem')
+            if physics_problem:
+                result = process_text_physics_problem(physics_problem)
+                return render_template('physics.html', img_name=None, result=result)
+        
+        elif action_type == 'capture':
+            # Handle capturing an image from the camera
+            success, frame = camera.read()
+            if success:
+                img_name = os.path.join(capture_folder, "captured_physics_image.jpg")
+                cv2.imwrite(img_name, frame)
+                result = process_img_llm_physics(img_name)
+                return render_template('physics.html', img_name="captured_physics_image.jpg", result=result['formatted_summary'])
+            else:
+                return "Failed to capture image"
+    
+    # Handle GET request
+    return render_template('physics.html', img_name=None, result=None)
+
 
 
 if __name__ == '__main__':

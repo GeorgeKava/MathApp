@@ -48,15 +48,30 @@
     <nav>
         <a href="/">Math</a>
         <a href="/chemistry">Chemistry</a>
+        <a href="/physics">Physics</a>
     </nav>
 </head>
 <body>
     <div class="container">
         <h1>Math Assistant</h1>
+        <form id="math-form" class="form-container" method="POST" action="/?type=text">
+            <label for="math-problem">Type your math problem:</label>
+            <input type="text" id="math-problem" name="math_problem" placeholder="e.g., Solve x^2 + 2x - 8 = 0">
+            <button type="submit">Submit Problem</button>
+        </form>
         <form class="form-container" method="POST" action="/capture">
             <label for="math-problem">Capture a math problem:</label>
             <button type="submit">Capture Photo</button>
         </form>
+        
+        {% if result %}
+        <div class="result-container">
+            <h2>Solution</h2>
+            <div class="math-output">
+                {{ result|safe }}
+            </div>
+        </div>
+        {% endif %}
         
         <div class="video-container">
             <h2>Live Camera Feed</h2>

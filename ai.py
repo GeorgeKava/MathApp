@@ -262,6 +262,32 @@ def format_result_for_display(result):
         formatted_result += f"\\[\n{solution}\n\\]\n\n"
     return formatted_result
 
+def process_text_math_problem(problem):
+    client = AzureOpenAI(
+        api_key=api_key,
+        api_version=api_version,
+        base_url=f"{azure_endpoint}/openai/deployments/{model}",
+    )
+    prompt = f"""You are an expert math assistant. Solve the following problem:
+                {problem}
+                Provide a detailed solution in plain text."""
+    response = client.chat.completions.create(
+        model=model,
+        messages=[
+            {
+                "role": "system",
+                "content": "You are a helpful assistant for solving math problems.",
+            },
+            {
+                "role": "user",
+                "content": prompt,
+            },
+        ],
+        max_tokens=2000,
+        temperature=0.0,
+    )
+    response_content = response.choices[0].message.content.strip()
+    return response_content
 
 def process_img_llm_chemistry(img_name):
     client = AzureOpenAI(
@@ -351,5 +377,96 @@ def process_text_chemistry_problem(problem):
     )
     response_content = response.choices[0].message.content.strip()
     return response_content
+
+def process_img_llm_physics(img_name):
+    client = AzureOpenAI(
+        api_key=api_key,
+        api_version=api_version,
+        base_url=f"{azure_endpoint}/openai/deployments/{model}",
+    )
+    prompt = """You are an expert physics assistant. Analyze the image provided and extract any physics problems.
+                Solve the physics problems and provide detailed solutions.
+                If the problem is a multiple-choice question, first state the correct answer and then provide a detailed explanation.
+                Return the results in the following JSON format:
+                [
+                    {
+                        "problem": "What is the acceleration of an object with a mass of 5 kg and a force of 20 N applied to it?",
+                        "solution": "The acceleration is calculated using Newton's second law: F = ma. Rearranging, a = F/m = 20 N / 5 kg = 4 m/s²."
+                    },
+                    {
+                        "problem": "What is the gravitational potential energy of a 2 kg object raised to a height of 10 m? (g = 9.8 m/s²)",
+                        "solution": "The gravitational potential energy is calculated as U = mgh. Substituting, U = 2 kg × 9.8 m/s² × 10 m = 196 J."
+                    },
+                    {
+                        "problem": "Which of the following is the correct formula for kinetic energy? (a) KE = 1/2 mv² (b) KE = mv² (c) KE = 1/2 mv",
+                        "solution": "The correct answer is (a) KE = 1/2 mv². Kinetic energy is defined as the energy of motion, and the formula is derived from the work-energy principle."
+                    }
+                ]
+            """
+    response = client.chat.completions.create(
+        model=model,
+        messages=[
+            {
+                "role": "system",
+                "content": "You are a helpful assistant to analyze physics problems.",
+            },
+            {
+                "role": "user",
+                "content": [
+                        {"type": "text", "text": prompt},
+                        {
+                            "type": "image_url",
+                            "image_url": {"url": local_image_to_data_url(img_name)},
+                        },
+                ],
+            },
+        ],
+        max_tokens=2000,
+        temperature=0.0,
+    )
+    response_content = response.choices[0].message.content.strip()
+    logging.debug(f"Response content: {response_content}")
+
+    # Attempt to parse the response content as JSON
+    try:
+        response_json = json.loads(response_content)
+        formatted_summary = format_result_for_display(response_json.get("detailed_solutions", []))
+    except json.JSONDecodeError as e:
+        logging.error(f"Failed to parse response as JSON: {e}")
+        response_json = {"error": "Failed to parse response as JSON"}
+        formatted_summary = response_content
+
+    return {
+        "formatted_summary": formatted_summary
+    }
+
+def process_text_physics_problem(problem):
+    client = AzureOpenAI(
+        api_key=api_key,
+        api_version=api_version,
+        base_url=f"{azure_endpoint}/openai/deployments/{model}",
+    )
+    prompt = f"""You are an expert physics assistant. Solve the following problem:
+                {problem}
+                Provide a detailed solution in plain text."""
+    response = client.chat.completions.create(
+        model=model,
+        messages=[
+            {
+                "role": "system",
+                "content": "You are a helpful assistant for solving physics problems.",
+            },
+            {
+                "role": "user",
+                "content": prompt,
+            },
+        ],
+        max_tokens=2000,
+        temperature=0.0,
+    )
+    response_content = response.choices[0].message.content.strip()
+    return response_content
+
+
 if __name__ == "__main__":
     create_index()
