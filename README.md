@@ -91,6 +91,7 @@ MathApp/
     pip install -r requirements.txt
 
 3. Set up the .env file with your Azure OpenAI API credentials:
+    
     AZURE_OPENAI_API_ENDPOINT=<your_endpoint>
     AZURE_OPENAI_API_KEY=<your_api_key>
     AZURE_OPENAI_API_VERSION=<api_version>
